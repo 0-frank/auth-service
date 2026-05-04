@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const tokenSchame = new mongoose.Schema({
+const tokenSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -10,6 +10,10 @@ const tokenSchame = new mongoose.Schema({
         type: String,
         required: true
     },
+    isValid: {
+        type: Boolean,
+        default: true
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -17,4 +21,4 @@ const tokenSchame = new mongoose.Schema({
     }
 });
 
-export default mongoose.model('Token', tokenSchame);
+export default mongoose.model('Token', tokenSchema);
