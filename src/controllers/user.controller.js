@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Role from "../models/Role.js";
+import Token from "../models/Token.js";
 
 async function mapROleNamesToIds(roleNames) {
     if (!roleNames) return null;
@@ -35,6 +36,8 @@ export async function updateUserById(req, res) {
             { new: true }
         ).populate("roles", "name");
 
+        await Token.updateMany({ userId: req.params.id }, { isValid: false });
+
         if (!updatedUser) return res.status(404).json({ message: "Usuario no encontrado" });
 
         res.status(200).json(updatedUser);
@@ -46,6 +49,8 @@ export async function deleteUserById(req, res) {
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
         if (!deletedUser) return res.status(404).json({ message: "Usuario no encontrado" });
+
+        await Token.updateMany({ userId: req.params.id }, { isValid: false });
 
         res.status(204).send();
     } catch (error) {

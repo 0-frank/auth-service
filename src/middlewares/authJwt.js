@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
 import Role from '../models/Role.js'
+import Token from "../models/Token.js";
 
 
 function extractToken(req) {
@@ -21,12 +22,22 @@ async function findUserToken(userId) {
     return user;
 };
 
+async function validateSession(token) {
+    const session = await Token.findOne({ token: token });
+    if (!session) throw new Error("Sesion no encontrada");
+    if (!session.isValid) throw new Error("La sesion ha sido cerrada");
+
+}
+
+
 
 
 export const verifyToken = async (req, res, next) => {
     try {
         const token = await extractToken(req);
         if (!token) return res.status(403).json({ message: "No se proporcionó un token" });
+
+        await validateSession(token);
 
         const decoded = await decodeToken(token);
         req.userId = decoded.id;
