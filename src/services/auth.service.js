@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import Role from '../models/Role.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Token from '../models/Token.js';
 
 async function encryptPassword(password) {
     const salt = await bcrypt.genSalt(10);
@@ -27,6 +28,17 @@ async function getRolesByNames(roles) {
     return defaultRole ? [defaultRole._id] : [];
 };
 
+async function saveTokenSession(userId, token) {
+    const newTokenSession = new Token({
+        userId,
+        token,
+        isValid: true
+    });
+    return await newTokenSession.save();
+}
+
+
+
 
 export const registerUser = async (userData) => {
     const { username, email, password, roles } = userData;
@@ -43,7 +55,10 @@ export const registerUser = async (userData) => {
     });
     const savedUser = await newUser.save();
 
-    return generateToken(savedUser._id);
+    const token = await generateToken(savedUser._id);
+    await saveTokenSession(savedUser._id, token);
+
+    return token;
 };
 
 export const loginUser = async (email, password) => {
@@ -54,6 +69,8 @@ export const loginUser = async (email, password) => {
     if (!isMatch) throw new Error("Contraseña incorrecta");
 
     const token = await generateToken(userFound._id);
+    await saveTokenSession(userFound._id, token);
+
     return {
         token,
         username: userFound.username,
