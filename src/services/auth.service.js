@@ -53,7 +53,7 @@ export const loginUser = async (email, password) => {
     const isMatch = await comparePassword(password, userFound.password);
     if (!isMatch) throw new Error("Contraseña incorrecta");
 
-    const token = generateToken(userFound._id);
+    const token = await generateToken(userFound._id);
     return {
         token,
         username: userFound.username,

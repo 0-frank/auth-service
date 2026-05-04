@@ -8,4 +8,8 @@ router.get('/', [verifyToken, isAdmin], userCtrl.getUsers);
 
 router.post('/', [verifyToken, isAdmin], userCtrl.createUser);
 
+router.delete('/:id', [verifyToken, isAdmin], userCtrl.deleteUserById);
+
+router.put('/:id', [verifyToken, isAdmin], userCtrl.updateUserById);
+
 export default router

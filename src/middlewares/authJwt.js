@@ -25,14 +25,12 @@ async function findUserToken(userId) {
 
 export const verifyToken = async (req, res, next) => {
     try {
-        // Añadido await a las funciones async
         const token = await extractToken(req);
         if (!token) return res.status(403).json({ message: "No se proporcionó un token" });
 
         const decoded = await decodeToken(token);
         req.userId = decoded.id;
 
-        // Corregido el nombre de la función a findUserToken
         await findUserToken(req.userId);
 
         next();

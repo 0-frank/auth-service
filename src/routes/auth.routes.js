@@ -5,6 +5,6 @@ import { checkDuplicateEmail } from "../middlewares/verigySignup.js";
 const router = Router();
 
 router.post('/signup', [checkDuplicateEmail], authCtrl.signUp);
-router.post('signin', authCtrl.signIn);
+router.post('/signin', authCtrl.signIn);
 
 export default router;
